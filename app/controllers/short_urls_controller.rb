@@ -15,6 +15,14 @@ class ShortUrlsController < ApplicationController
   end
 
   def show
+    @url = ShortUrl.find_by_short_code(params[:id])
+
+    @url.click_count += 1
+    @url.save
+
+    redirect_to @url.full_url
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Not Found'}, status: :not_found
   end
 
   private
