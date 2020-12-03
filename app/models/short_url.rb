@@ -2,8 +2,7 @@ class ShortUrl < ApplicationRecord
 
   CHARACTERS = [*'0'..'9', *'a'..'z', *'A'..'Z'].freeze
 
-  scope :top, ->(top = 100) { limit(top).order(click_count: :desc) }
-
+  validates :full_url, presence: true
   validate :validate_full_url
 
   def short_code
@@ -15,6 +14,11 @@ class ShortUrl < ApplicationRecord
   private
 
   def validate_full_url
+    uri = URI.parse(full_url)
+
+    errors.add(:full_url, 'is not a valid url') unless uri.is_a?(URI::HTTP) && !uri.host.nil?
+  rescue URI::InvalidURIError
+    errors.add(:full_url, 'is not a valid url')
   end
 
 end
