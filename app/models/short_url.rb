@@ -1,11 +1,9 @@
-# Encoding and decoding reference
-# https://github.com/delight-im/ShortURL/commit/1044df79aebdabe437b269552bb9ed80df2c28e3
+require 'mechanize'
+
 class ShortUrl < ApplicationRecord
 
   validates :full_url, presence: true
   validate :validate_full_url
-
-  after_create :update_title!
 
   scope :top, ->(top = 100) { limit(top).order(click_count: :desc) }
   scope :find_by_short_code, lambda { |short_code|
@@ -23,7 +21,12 @@ class ShortUrl < ApplicationRecord
   end
 
   def update_title!
-    UpdateTitleJob.perform_later(self[:id])
+    mechanize = Mechanize.new
+
+    mechanize.get(self[:full_url]) do |page|
+      self[:title] = page.title
+      save
+    end
   end
 
   def as_json(options = { })

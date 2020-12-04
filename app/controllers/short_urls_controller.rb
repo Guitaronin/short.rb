@@ -8,6 +8,7 @@ class ShortUrlsController < ApplicationController
     @url = ShortUrl.new(short_url_params)
 
     if @url.save!
+      UpdateTitleJob.perform_later(@url.id)
       render json: @url, status: :created
     end
   rescue ActiveRecord::RecordInvalid
