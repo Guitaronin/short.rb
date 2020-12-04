@@ -2,6 +2,9 @@ require 'mechanize'
 
 class ShortUrl < ApplicationRecord
 
+  COLUMNS = %i[full_url title click_count]
+  METHODS = %i[short_code]
+
   validates :full_url, presence: true
   validate :validate_full_url
 
@@ -30,11 +33,15 @@ class ShortUrl < ApplicationRecord
   end
 
   def as_json(options = { })
-    super(options.merge({ :methods => [:short_code ], except: [:created_at, :updated_at ] }))
+    defaults = { only: COLUMNS, methods: METHODS }
+    super(defaults.merge(options))
   end
 
   def public_attributes
-    %w[id full_url title click_count short_code]
+    data = COLUMNS.each_with_object({}) { |attribute, memo| memo[attribute.to_s] = self[attribute] }
+    METHODS.each { |method| data[method.to_s] = self.send(method) }
+
+    data
   end
 
   private

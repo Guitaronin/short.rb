@@ -1,7 +1,9 @@
 class ShortUrlsController < ApplicationController
 
   def index
-    render json: { urls: ShortUrl.top }
+    @urls = ShortUrl.top
+
+    render json: { urls: @urls }
   end
 
   def create
