@@ -32,6 +32,7 @@ gem "resque"
 gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'mechanize', '~> 2.7', '>= 2.7.5'
+gem 'rack-cors'
 
 group :development, :test do
   gem 'rspec-rails'
