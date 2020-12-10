@@ -2,7 +2,7 @@ require 'mechanize'
 
 class ShortUrl < ApplicationRecord
 
-  COLUMNS = %i[full_url title click_count]
+  COLUMNS = %i[id full_url title click_count]
   METHODS = %i[short_code]
 
   validates :full_url, presence: true
